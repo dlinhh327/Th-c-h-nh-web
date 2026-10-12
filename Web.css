@@ -1,1 +1,91 @@
+:root {
+    --blue: #0056b3; 
+    --blue-light: #e6f0fa;
+    --dark: #1e3a8a;
+    --sky: #00a6d6;
+    --light: #f4f6f9;
+    --line: #dee2e6;
+    --text-main: #333;
+}
 
+body {
+    display: flex;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    color: var(--text-main);
+    background-color: var(--light);
+    height: 100vh;
+}
+
+/* ... GIỮ NGUYÊN CSS CỦA SIDEBAR BẠN ĐÃ VIẾT TRONG ẢNH 2 ... */
+.sidebar { width: 250px; min-height: 100vh; flex-shrink: 0; color: #fff; background: linear-gradient(180deg, var(--dark), var(--blue)); }
+/* ... */
+
+.wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+header {
+    background: #fff;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--line);
+}
+
+.main-content {
+    padding: 20px 30px;
+}
+
+.layout-grid {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    gap: 20px;
+}
+
+.card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* TABLE CSS CHUẨN UX/UI */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--line);
+    font-size: 14px;
+}
+
+th {
+    color: #666;
+    font-weight: bold;
+}
+
+/* Highlight dòng đang active (màu xanh) */
+tr.active-row {
+    background-color: var(--blue);
+    color: #fff;
+}
+
+tr:hover:not(.active-row) {
+    background-color: var(--blue-light);
+}
+
+#admin-form input {
+    padding: 8px;
+    margin-right: 10px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+}
