@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thắc mắc</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- KHUNG ĐẦU TRANG -->
+    <div id="khung-dau"></div>
+
+    <!-- NỘI DUNG CHÍNH -->
+    <main class="container trang">
+        <h2 class="tieu-de-trang">Thắc mắc</h2>
+        <p class="mo-ta">Gửi câu hỏi cần giải đáp.</p>
+
+        <div id="tab-thacmac" class="tab-noidung hien">
+            
+            <!-- FORM GỬI THẮC MẮC -->
+            <div class="the">
+                <h3>Gửi thắc mắc</h3>
+                <div id="tb-tm" class="thong-bao"></div>
+                
+                <form id="form-tm">
+                    <div class="hang">
+                        <div class="o-nhap">
+                            <label>Chủ đề</label>
+                            <select id="tm-loai">
+                                <option>Điểm danh</option>
+                                <option>Lịch học</option>
+                                <option>Phòng học</option>
+                                <option>Khác</option>
+                            </select>
+                        </div>
+                        <div class="o-nhap">
+                            <label>Tiêu đề</label>
+                            <input type="text" id="tm-tieu-de" placeholder="Tóm tắt...">
+                        </div>
+                    </div>
+                    
+                    <div class="hang">
+                        <div class="o-nhap rong">
+                            <label>Nội dung</label>
+                            <textarea id="tm-noi-dung" placeholder="Nội dung..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="nut">Gửi</button>
+                </form>
+            </div>
+
+            <!-- DANH SÁCH THẮC MẮC CỦA BẠN -->
+            <div class="the">
+                <h3>Thắc mắc của bạn</h3>
+                <div id="ds-tm"></div>
+            </div>
+
+            <!-- CÂU HỎI THƯỜNG GẶP -->
+            <div class="the">
+                <h3>Câu hỏi thường gặp</h3>
+                
+                <details>
+                    <summary>Quên điểm danh?</summary>
+                    <p>Chọn lại ngày học ở tab Điểm danh hoặc gửi thắc mắc.</p>
+                </details>
+                
+                <details>
+                    <summary>Xin nghỉ có phép?</summary>
+                    <p>Chọn trạng thái xin nghỉ và ghi rõ lý do.</p>
+                </details>
+                
+                <details>
+                    <summary>Nhập nhầm môn?</summary>
+                    <p>Xóa dòng nhầm trong lịch sử và điểm danh lại.</p>
+                </details>
+                
+                <details>
+                    <summary>Xem thời khóa biểu?</summary>
+                    <p>Xem tại trang Lịch học hoặc gửi thắc mắc chủ đề Lịch học.</p>
+                </details>
+                
+                <details>
+                    <summary>Chuyển lớp học?</summary>
+                    <p>Gửi thắc mắc chủ đề Khác hoặc liên hệ giáo vụ.</p>
+                </details>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- CHÂN TRANG -->
+    <footer id="chan-trang" class="chan-trang"></footer>
+
+    <!-- KỊCH BẢN XỬ LÝ -->
+    <script src="chung.js"></script>
+    <script>
+        veKhung("thacmac");
+        const K = khoaRieng("thacMac");
+
+        function veThacMac() {
+            const ds = layDuLieu(K, []).sort((a, b) => b.id - a.id);
+            let h = "";
+
+            if (!ds.length) h = '<p class="trong-bang">Chưa có thắc mắc.</p>';
+            
+            ds.forEach(x => {
+                h += `<div class="cau-hoi">
+                    <h4>${anToan(x.tieuDe)} <span class="nhan vang">${x.trangThai}</span></h4>
+                    <div class="ngay-nho">Chủ đề: ${x.loai} - ${dinhDangNgay(x.ngay)}</div>
+                    <p style="margin:8px 0">${anToan(x.noiDung)}</p>
+                    <button class="nut nut-nho nut-do" onclick="xoaThacMac(${x.id})">Xóa</button>
+                </div>`;
+            });
+            document.getElementById("ds-tm").innerHTML = h;
+        }
+
+        function guiThacMac(e) {
+            e.preventDefault();
+            const loai = document.getElementById("tm-loai").value;
+            const tieuDe = document.getElementById("tm-tieu-de").value.trim();
+            const noiDung = document.getElementById("tm-noi-dung").value.trim();
+
+            if (!tieuDe || !noiDung) return hienThongBao("tb-tm", "Nhập đủ tiêu đề và nội dung.", "loi");
+
+            const ds = layDuLieu(K, []);
+            ds.push({ id: Date.now(), loai, tieuDe, noiDung, ngay: homNay(), trangThai: "Chờ trả lời" });
+            luuDuLieu(K, ds);
+
+            hienThongBao("tb-tm", "Đã gửi.", "thanh-cong");
+            document.getElementById("tm-tieu-de").value = "";
+            document.getElementById("tm-noi-dung").value = "";
+            veThacMac();
+        }
+
+        function xoaThacMac(id) {
+            if (!confirm("Xóa?")) return;
+            luuDuLieu(K, layDuLieu(K, []).filter(x => x.id !== id));
+            veThacMac();
+        }
+
+        document.getElementById("form-tm").addEventListener("submit", guiThacMac);
+        veThacMac();
+    </script>
+</body>
+</html>

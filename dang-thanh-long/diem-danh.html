@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Điểm danh</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- KHUNG ĐẦU TRANG -->
+    <div id="khung-dau"></div>
+
+    <!-- NỘI DUNG CHÍNH -->
+    <main class="container trang">
+        <h2 class="tieu-de-trang">Điểm danh</h2>
+        <p class="mo-ta">Điểm danh các buổi học và theo dõi lịch sử.</p>
+
+        <div id="tab-diemdanh" class="tab-noidung hien">
+            
+            <!-- KHUNG THỐNG KÊ -->
+            <div class="luoi-thong-ke">
+                <div class="o-thong-ke">
+                    <div class="so" id="so-tong">0</div>
+                    <div class="chu">Tổng số buổi đã ghi</div>
+                </div>
+                <div class="o-thong-ke">
+                    <div class="so" id="so-co-mat">0</div>
+                    <div class="chu">Có mặt</div>
+                </div>
+                <div class="o-thong-ke">
+                    <div class="so" id="so-nghi">0</div>
+                    <div class="chu">Xin nghỉ có phép</div>
+                </div>
+                <div class="o-thong-ke">
+                    <div class="so" id="ty-le">0%</div>
+                    <div class="chu">Tỉ lệ có mặt</div>
+                </div>
+            </div>
+
+            <!-- FORM ĐIỂM DANH -->
+            <div class="the">
+                <h3>Điểm danh buổi học</h3>
+                <div id="tb-dd" class="thong-bao"></div>
+                
+                <form id="form-dd">
+                    <div class="hang">
+                        <div class="o-nhap">
+                            <label>Ngày học</label>
+                            <input type="date" id="dd-ngay">
+                        </div>
+                        <div class="o-nhap">
+                            <label>Môn học</label>
+                            <select id="dd-mon"></select>
+                        </div>
+                        <div class="o-nhap">
+                            <label>Trạng thái</label>
+                            <select id="dd-trang-thai">
+                                <option value="Có mặt">Có mặt</option>
+                                <option value="Xin nghỉ có phép">Xin nghỉ có phép</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="hang" id="hang-ly-do" style="display:none">
+                        <div class="o-nhap rong">
+                            <label>Lý do xin nghỉ</label>
+                            <input type="text" id="dd-ly-do" placeholder="Lý do...">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="nut">Lưu điểm danh</button>
+                </form>
+            </div>
+
+            <!-- BẢNG LỊCH SỬ -->
+            <div class="the">
+                <h3>Lịch sử điểm danh</h3>
+                <div class="cuon">
+                    <table class="bang">
+                        <thead>
+                            <tr>
+                                <th>Ngày</th>
+                                <th>Môn học</th>
+                                <th>Trạng thái</th>
+                                <th>Lý do</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="bang-dd"></tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- CHÂN TRANG -->
+    <footer id="chan-trang" class="chan-trang"></footer>
+
+    <!-- KỊCH BẢN XỬ LÝ -->
+    <script src="chung.js"></script>
+    <script>
+        veKhung("diemdanh");
+        const K = khoaRieng("diemDanh");
+
+        function veLichSu() {
+            const ds = layDuLieu(K, []).sort((a, b) => b.ngay.localeCompare(a.ngay));
+            const cm = ds.filter(x => x.trangThai === "Có mặt").length;
+
+            document.getElementById("so-tong").textContent = ds.length;
+            document.getElementById("so-co-mat").textContent = cm;
+            document.getElementById("so-nghi").textContent = ds.length - cm;
+            document.getElementById("ty-le").textContent = (ds.length ? Math.round(cm * 100 / ds.length) : 0) + "%";
+
+            let h = "";
+            if (!ds.length) h = '<tr><td colspan="5" class="trong-bang">Chưa có dữ liệu.</td></tr>';
+            
+            ds.forEach(x => {
+                h += `<tr>
+                    <td>${dinhDangNgay(x.ngay)}</td>
+                    <td><b>${anToan(x.mon)}</b></td>
+                    <td><span class="nhan ${x.trangThai === "Có mặt" ? "xanh" : "vang"}">${x.trangThai}</span></td>
+                    <td>${anToan(x.lyDo || "")}</td>
+                    <td><button class="nut nut-nho nut-do" onclick="xoaDiemDanh(${x.id})">Xóa</button></td>
+                </tr>`;
+            });
+            document.getElementById("bang-dd").innerHTML = h;
+        }
+
+        function luuDiemDanh(e) {
+            e.preventDefault();
+            const ngay = document.getElementById("dd-ngay").value;
+            const mon = document.getElementById("dd-mon").value;
+            const tt = document.getElementById("dd-trang-thai").value;
+            const ld = document.getElementById("dd-ly-do").value.trim();
+
+            if (!ngay) return hienThongBao("tb-dd", "Chọn ngày học.", "loi");
+            if (ngay > homNay()) return hienThongBao("tb-dd", "Không thể điểm danh ngày tương lai.", "loi");
+            if (tt !== "Có mặt" && !ld) return hienThongBao("tb-dd", "Nhập lý do nghỉ.", "loi");
+
+            const ds = layDuLieu(K, []);
+            if (ds.some(x => x.ngay === ngay && x.mon === mon)) return hienThongBao("tb-dd", "Đã điểm danh môn này ngày này.", "loi");
+
+            ds.push({ id: Date.now(), ngay, mon, trangThai: tt, lyDo: tt === "Có mặt" ? "" : ld });
+            luuDuLieu(K, ds);
+
+            hienThongBao("tb-dd", "Đã lưu.", "thanh-cong");
+            document.getElementById("dd-ly-do").value = "";
+            veLichSu();
+        }
+
+        function xoaDiemDanh(id) {
+            if (!confirm("Xóa?")) return;
+            luuDuLieu(K, layDuLieu(K, []).filter(x => x.id !== id));
+            veLichSu();
+        }
+
+        let opt = "";
+        danhSachMon().forEach(m => opt += `<option>${m}</option>`);
+        document.getElementById("dd-mon").innerHTML = opt;
+
+        document.getElementById("dd-ngay").value = homNay();
+        document.getElementById("dd-ngay").max = homNay();
+
+        document.getElementById("dd-trang-thai").addEventListener("change", function() {
+            document.getElementById("hang-ly-do").style.display = this.value === "Có mặt" ? "none" : "flex";
+        });
+
+        document.getElementById("form-dd").addEventListener("submit", luuDiemDanh);
+        veLichSu();
+    </script>
+</body>
+</html>
