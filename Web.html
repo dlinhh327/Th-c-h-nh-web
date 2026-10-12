@@ -1,1 +1,95 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Lịch học - Cổng thông tin</title>
+    <link rel="stylesheet" type="text/css" href="Thoi khoa bieu.css">
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="logo">
+            
+            <h1>Quản lý phòng học</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#">Trang chủ</a></li>
+                <li><a href="#">Tin tức</a></li>
+                <li><a href="#">Hồ sơ</a></li>
+                <li><a href="#">Góc học tập</a></li>
+                <li><a href="#">Đăng ký trực tuyến</a></li>
+                <li class="active">
+                    <a href="#">Tra cứu lịch</a>
+                    <ul class="submenu">
+                        <li class="current"><a href="#">Lịch học</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+    <div class="wrapper">
+        <header>
+            <input type="text" placeholder="Tìm kiếm thông tin">
+            <div class="user"><span class="avatar">T</span> Tạ Duy Linh</div>
+        </header>
 
+        <main class="main-content">
+            <p class="breadcrumb">Tra cứu lịch &gt; <b>Lịch học</b></p>
+            
+            <div class="layout-grid">
+                <div class="left">
+                    <section class="card">
+                        <h2><span class="icon">👥</span> Lớp học phần (không có lịch chi tiết)</h2>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Mã lớp</th>
+                                        <th>Tên lớp</th>
+                                        <th>Hình thức học</th>
+                                        <th>Ngày bắt đầu</th>
+                                        <th>Ngày kết thúc</th>
+                                        <th>Ghi chú</th>
+                                    </tr>
+                                </thead>
+                                <!-- JS SẼ ĐỔ DỮ LIỆU VÀO ĐÂY -->
+                                <tbody id="class-table-body">
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <!-- Form mô phỏng Admin thêm dữ liệu -->
+                    <section class="card admin-panel" style="margin-top: 20px; border: 1px dashed var(--blue);">
+                        <h3>Khu vực Admin: Thêm lớp học mới</h3>
+                        <form id="admin-form">
+                            <input type="text" id="maLop" placeholder="Mã lớp (VD: IT1.103...)" required>
+                            <input type="text" id="tenLop" placeholder="Tên lớp (VD: Kỹ thuật lập trình)" required>
+                            <input type="date" id="ngayBatDau" required>
+                            <input type="date" id="ngayKetThuc" required>
+                            <button type="submit" style="background: var(--blue); color: white; padding: 8px 16px; border: none; cursor: pointer;">Thêm vào CSDL</button>
+                            <button type="button" id="reset-db" style="background: #dc3545; color: white; padding: 8px 16px; border: none; cursor: pointer;">Reset Dữ Liệu</button>
+                        </form>
+                    </section>
+                </div>
+
+                <div class="right">
+                    <!-- Khu vực để lịch mini như trong ảnh 3 -->
+                    <section class="card mini-calendar">
+                        <h2>Tháng 10-2026</h2>
+                        <!-- Lịch tĩnh mô phỏng -->
+                        <div class="cal-grid">
+                            <span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span><span>T7</span><span>Cn</span>
+                            <!-- ... các ngày ... -->
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Gọi file JS -->
+    <script src="script.js"></script>
+</body>
+</html>
