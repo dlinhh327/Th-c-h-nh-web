@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yêu cầu đặt phòng</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- YÊU CẦU ĐẶT PHÒNG
+       Admin: xem tất cả, duyệt hoặc từ chối
+       Giảng viên: xem yêu cầu của mình, có thể hủy -->
+
+  <div class="bo-cuc">
+    <div id="menu-trai" class="menu-trai"></div>
+
+    <div class="phai-noidung">
+      <div id="thanh-tren" class="thanh-tren"></div>
+
+      <div class="noidung">
+        <h2 id="tieu-de">Yêu cầu đặt phòng</h2>
+        <p class="mo-ta">Danh sách yêu cầu đặt phòng chia theo trạng thái</p>
+
+        <div class="khung">
+          <!-- 3 tab -->
+          <div class="tab">
+            <button id="tab-cho" class="dang-chon" onclick="chonTab('Chờ duyệt')">Chờ duyệt (<span id="dem-cho">0</span>)</button>
+            <button id="tab-duyet" onclick="chonTab('Đã duyệt')">Đã duyệt (<span id="dem-duyet">0</span>)</button>
+            <button id="tab-tuchoi" onclick="chonTab('Từ chối')">Từ chối (<span id="dem-tuchoi">0</span>)</button>
+          </div>
+
+          <div id="thong-bao" class="thong-bao"></div>
+
+          <div class="cuon">
+            <table>
+              <tr>
+                <th>Ngày sử dụng</th><th>Người đặt</th><th>Phòng</th><th>Thời gian</th><th>Mục đích</th><th>Trạng thái</th><th>Thao tác</th>
+              </tr>
+              <tbody id="bang-yeu-cau"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="chung.js"></script>
+  <script>
+    veMenu("yeucau", false);
+
+    const nguoi = layNguoiDangNhap();
+    let tabHienTai = "Chờ duyệt";
+
+    // Yêu cầu này có thuộc về người đang đăng nhập xem không?
+    // (Admin xem được tất cả, giảng viên chỉ xem của mình)
+    function duocXem(y) {
+      if (nguoi.vaiTro == "Admin") {
+        return true;
+      }
+      return y.nguoiDat == nguoi.ma;
+    }
+
+    // Vẽ lại bảng và số đếm trên các tab
+    function veBang() {
+      const ds = layYeuCau();
+      let demCho = 0;
+      let demDuyet = 0;
+      let demTuChoi = 0;
+      let html = "";
+
+      // Duyệt từ cuối lên để yêu cầu mới nhất nằm trên cùng
+      for (let i = ds.length - 1; i >= 0; i--) {
+        const y = ds[i];
+        if (duocXem(y) == false) {
+          continue;   // bỏ qua, xem yêu cầu tiếp theo
+        }
+
+        // Đếm cho các tab
+        if (y.trangThai == "Chờ duyệt") { demCho++; }
+        if (y.trangThai == "Đã duyệt") { demDuyet++; }
+        if (y.trangThai == "Từ chối") { demTuChoi++; }
+
+        // Chỉ vẽ các yêu cầu thuộc tab đang chọn
+        if (y.trangThai != tabHienTai) {
+          continue;
+        }
+
+        // Nút thao tác
+        let nut = "";
+        if (nguoi.vaiTro == "Admin") {
+          if (y.trangThai == "Chờ duyệt") {
+            nut = '<button class="nut-nho xanh" onclick="duyet(' + i + ')">Duyệt</button> ' +
+                  '<button class="nut-nho do" onclick="tuChoi(' + i + ')">Từ chối</button>';
+          } else if (y.trangThai == "Đã duyệt") {
+            nut = '<button class="nut-nho do" onclick="tuChoi(' + i + ')">Thu hồi</button>';
+          }
+        } else {
+          nut = '<button class="nut-nho do" onclick="huy(' + i + ')">Hủy yêu cầu</button>';
+        }
+
+        // Nếu bị từ chối thì hiện lý do
+        let trangThai = nhanYeuCau(y.trangThai);
+        if (y.trangThai == "Từ chối") {
+          trangThai += "<br><small>Lý do: " + anToan(y.lyDo) + "</small>";
+        }
+
+        html += "<tr>";
+        html += "<td>" + dinhDangNgay(y.ngay) + "</td>";
+        html += "<td>" + anToan(y.tenNguoiDat) + "</td>";
+        html += "<td><b>" + y.phong + "</b></td>";
+        html += "<td>" + y.tu + " - " + y.den + "</td>";
+        html += "<td>" + anToan(y.mucDich) + "</td>";
+        html += "<td>" + trangThai + "</td>";
+        html += "<td>" + nut + "</td>";
+        html += "</tr>";
+      }
+
+      if (html == "") {
+        html = '<tr><td colspan="7">Không có yêu cầu nào.</td></tr>';
+      }
+      document.getElementById("bang-yeu-cau").innerHTML = html;
+      document.getElementById("dem-cho").textContent = demCho;
+      document.getElementById("dem-duyet").textContent = demDuyet;
+      document.getElementById("dem-tuchoi").textContent = demTuChoi;
+    }
+
+    // Bấm vào một tab
+    function chonTab(ten) {
+      tabHienTai = ten;
+      document.getElementById("tab-cho").className = "";
+      document.getElementById("tab-duyet").className = "";
+      document.getElementById("tab-tuchoi").className = "";
+      if (ten == "Chờ duyệt") {
+        document.getElementById("tab-cho").className = "dang-chon";
+      } else if (ten == "Đã duyệt") {
+        document.getElementById("tab-duyet").className = "dang-chon";
+      } else {
+        document.getElementById("tab-tuchoi").className = "dang-chon";
+      }
+      veBang();
+    }
+
+    // Admin DUYỆT (i là vị trí của yêu cầu trong danh sách)
+    function duyet(i) {
+      const ds = layYeuCau();
+      const y = ds[i];
+
+      // Phòng đang bảo trì thì không duyệt
+      const phong = timPhong(y.phong);
+      if (phong != null && phong.tinhTrang == "Bảo trì") {
+        hienThongBao("thong-bao", "Không thể duyệt: phòng " + y.phong + " đang bảo trì.", "loi");
+        return;
+      }
+
+      // Trùng giờ với yêu cầu đã duyệt khác thì không duyệt
+      const trung = timYeuCauTrung(y.phong, y.ngay, y.tu, y.den, y.id);
+      if (trung != null) {
+        hienThongBao("thong-bao", "Không thể duyệt: phòng " + y.phong + " đã có lịch được duyệt từ " + trung.tu + " đến " + trung.den + ".", "loi");
+        return;
+      }
+
+      y.trangThai = "Đã duyệt";
+      y.lyDo = "";
+      luuDuLieu("ql_yeuCau", ds);
+      hienThongBao("thong-bao", "Đã duyệt yêu cầu của " + y.tenNguoiDat + ".", "ok");
+      veBang();
+    }
+
+    // Admin TỪ CHỐI (hoặc thu hồi)
+    function tuChoi(i) {
+      const lyDo = prompt("Nhập lý do từ chối:");
+      if (lyDo == null) {
+        return;   // người dùng bấm Cancel
+      }
+      const ds = layYeuCau();
+      ds[i].trangThai = "Từ chối";
+      ds[i].lyDo = lyDo.trim();
+      if (ds[i].lyDo == "") {
+        ds[i].lyDo = "Không có lý do";
+      }
+      luuDuLieu("ql_yeuCau", ds);
+      hienThongBao("thong-bao", "Đã từ chối yêu cầu.", "ok");
+      veBang();
+    }
+
+    // Giảng viên HỦY yêu cầu của mình
+    function huy(i) {
+      if (confirm("Bạn có chắc muốn hủy yêu cầu này không?") == false) {
+        return;
+      }
+      const ds = layYeuCau();
+      ds.splice(i, 1);
+      luuDuLieu("ql_yeuCau", ds);
+      hienThongBao("thong-bao", "Đã hủy yêu cầu.", "ok");
+      veBang();
+    }
+
+    if (nguoi.vaiTro != "Admin") {
+      document.getElementById("tieu-de").textContent = "Yêu cầu của tôi";
+    }
+    veBang();
+  </script>
+</body>
+</html>

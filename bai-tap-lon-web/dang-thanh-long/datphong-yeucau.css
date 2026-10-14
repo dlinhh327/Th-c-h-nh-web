@@ -1,0 +1,49 @@
+/* ============================================================
+   CSS RIÊNG CHO 2 TRANG: ĐẶT PHÒNG (datphong.html)
+                          và YÊU CẦU ĐẶT PHÒNG (yeucau.html)
+   Trang nào cũng nạp thêm style.css trước file này.
+   ============================================================ */
+
+
+/* ===== PHẦN 1: TRANG ĐẶT PHÒNG ===== */
+
+/* Khung "ảnh phòng" (vì chưa có ảnh thật nên dùng khối màu) */
+.anh-phong {
+  background: linear-gradient(135deg, #2f66d0, #17336b);
+  color: white;
+  text-align: center;
+  padding: 40px 10px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Mỗi dòng thông tin phòng: Tòa nhà, Sức chứa, Thiết bị... */
+.dong-tt {
+  padding: 6px 0;
+  border-bottom: 1px dashed #dde4ef;
+}
+
+
+/* ===== PHẦN 2: TRANG YÊU CẦU ĐẶT PHÒNG ===== */
+
+/* Hàng 3 nút: Chờ duyệt / Đã duyệt / Từ chối */
+.tab {
+  margin-bottom: 14px;
+  border-bottom: 1px solid #e0e6f0;
+}
+
+.tab button {
+  background: none;
+  color: #778;
+  border-radius: 0;
+  padding: 10px 14px;
+  font-weight: bold;
+}
+
+/* Tab đang được chọn */
+.tab button.dang-chon {
+  color: #2563eb;
+  border-bottom: 3px solid #2563eb;
+}

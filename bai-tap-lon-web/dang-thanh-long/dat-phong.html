@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đặt phòng</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ĐẶT PHÒNG: gửi yêu cầu đặt phòng -->
+
+  <div class="bo-cuc">
+    <div id="menu-trai" class="menu-trai"></div>
+
+    <div class="phai-noidung">
+      <div id="thanh-tren" class="thanh-tren"></div>
+
+      <div class="noidung">
+        <h2>Đặt phòng</h2>
+        <p class="mo-ta" id="ghi-chu"></p>
+
+        <div class="luoi-2">
+
+          <!-- Form đặt phòng -->
+          <div class="khung">
+            <h3>Đặt phòng học</h3>
+            <div id="bao-loi" class="thong-bao"></div>
+
+            <label>Chọn phòng *</label>
+            <select id="d-phong" onchange="hienThongTin()"></select>
+
+            <label>Ngày sử dụng *</label>
+            <input type="date" id="d-ngay" onchange="hienThongTin()">
+
+            <div class="hai-cot">
+              <div>
+                <label>Giờ bắt đầu *</label>
+                <select id="d-tu"></select>
+              </div>
+              <div>
+                <label>Giờ kết thúc *</label>
+                <select id="d-den"></select>
+              </div>
+            </div>
+
+            <label>Mục đích sử dụng *</label>
+            <textarea id="d-muc-dich" placeholder="Ví dụ: Học môn, họp nhóm, seminar..."></textarea>
+
+            <button onclick="guiYeuCau()">Gửi yêu cầu</button>
+          </div>
+
+          <!-- Thông tin phòng -->
+          <div class="khung">
+            <h3>Thông tin phòng</h3>
+            <div id="thong-tin-phong"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="chung.js"></script>
+  <script>
+    veMenu("datphong", false);
+
+    const nguoi = layNguoiDangNhap();
+
+    // Hiện thông tin phòng đang chọn và các lịch đã đặt của phòng trong ngày
+    function hienThongTin() {
+      const phong = timPhong(document.getElementById("d-phong").value);
+      const ngay = document.getElementById("d-ngay").value;
+      if (phong == null) {
+        return;
+      }
+
+      let html = '<div class="anh-phong">🏫 ' + anToan(phong.ten) + "</div>";
+      html += '<div class="dong-tt">Tòa nhà: <b>' + anToan(phong.toa) + "</b></div>";
+      html += '<div class="dong-tt">Sức chứa: <b>' + phong.sucChua + " người</b></div>";
+      html += '<div class="dong-tt">Thiết bị: <b>' + anToan(phong.thietBi) + "</b></div>";
+      html += '<div class="dong-tt">Trạng thái: ' + nhanPhong(trangThaiPhong(phong)) + "</div>";
+
+      // Lịch của phòng trong ngày đã chọn
+      if (ngay != "") {
+        html += "<h4 style='margin-top:14px'>Lịch của phòng ngày " + dinhDangNgay(ngay) + "</h4>";
+        const dsYeuCau = layYeuCau();
+        let coLich = false;
+        for (let i = 0; i < dsYeuCau.length; i++) {
+          const y = dsYeuCau[i];
+          if (y.phong == phong.ma && y.ngay == ngay && y.trangThai != "Từ chối") {
+            html += '<div class="dong-tt"><b>' + y.tu + " - " + y.den + "</b> " + anToan(y.mucDich) + " " + nhanYeuCau(y.trangThai) + "</div>";
+            coLich = true;
+          }
+        }
+        if (coLich == false) {
+          html += "<p>Chưa có lịch nào - phòng còn trống cả ngày.</p>";
+        }
+      }
+
+      document.getElementById("thong-tin-phong").innerHTML = html;
+    }
+
+    // Bấm nút "Gửi yêu cầu"
+    function guiYeuCau() {
+      const maPhong = document.getElementById("d-phong").value;
+      const ngay = document.getElementById("d-ngay").value;
+      const tu = document.getElementById("d-tu").value;
+      const den = document.getElementById("d-den").value;
+      const mucDich = document.getElementById("d-muc-dich").value.trim();
+
+      // ----- Kiểm tra dữ liệu -----
+      if (ngay == "" || mucDich == "") {
+        hienThongBao("bao-loi", "Vui lòng chọn ngày và nhập mục đích sử dụng.", "loi");
+        return;
+      }
+      if (ngay < homNay()) {
+        hienThongBao("bao-loi", "Không thể đặt phòng cho ngày đã qua.", "loi");
+        return;
+      }
+      if (tu >= den) {
+        hienThongBao("bao-loi", "Giờ kết thúc phải sau giờ bắt đầu.", "loi");
+        return;
+      }
+      if (ngay == homNay() && tu < gioHienTai()) {
+        hienThongBao("bao-loi", "Giờ bắt đầu đã qua. Hãy chọn giờ khác hoặc ngày khác.", "loi");
+        return;
+      }
+
+      const phong = timPhong(maPhong);
+      if (phong.tinhTrang == "Bảo trì") {
+        hienThongBao("bao-loi", "Phòng " + maPhong + " đang bảo trì, không thể đặt.", "loi");
+        return;
+      }
+
+      const trung = timYeuCauTrung(maPhong, ngay, tu, den, 0);
+      if (trung != null) {
+        hienThongBao("bao-loi", "Phòng " + maPhong + " đã có lịch được duyệt từ " + trung.tu + " đến " + trung.den + ". Vui lòng chọn giờ khác.", "loi");
+        return;
+      }
+
+      // ----- Lưu yêu cầu -----
+      // Admin đặt thì được duyệt luôn, giảng viên đặt thì chờ Admin duyệt
+      let trangThai = "Chờ duyệt";
+      let tenNguoiDat = "GV. " + nguoi.ten;
+      if (nguoi.vaiTro == "Admin") {
+        trangThai = "Đã duyệt";
+        tenNguoiDat = "Admin " + nguoi.ten;
+      }
+
+      const ds = layYeuCau();
+      let idMoi = 1;
+      if (ds.length > 0) {
+        idMoi = ds[ds.length - 1].id + 1;   // id mới = id của yêu cầu cuối + 1
+      }
+      ds.push({
+        id: idMoi,
+        phong: maPhong,
+        ngay: ngay,
+        tu: tu,
+        den: den,
+        mucDich: mucDich,
+        nguoiDat: nguoi.ma,
+        tenNguoiDat: tenNguoiDat,
+        trangThai: trangThai,
+        lyDo: ""
+      });
+      luuDuLieu("ql_yeuCau", ds);
+
+      if (trangThai == "Đã duyệt") {
+        hienThongBao("bao-loi", "Đặt phòng thành công (đã được duyệt).", "ok");
+      } else {
+        hienThongBao("bao-loi", "Đã gửi yêu cầu! Vui lòng chờ Admin duyệt. Xem tại mục \"Yêu cầu của tôi\".", "ok");
+      }
+      document.getElementById("d-muc-dich").value = "";
+      hienThongTin();
+    }
+
+    // ----- Chuẩn bị trang -----
+    // Đổ danh sách phòng vào ô chọn
+    let htmlPhong = "";
+    const dsPhong = layPhong();
+    for (let i = 0; i < dsPhong.length; i++) {
+      const p = dsPhong[i];
+      let them = "";
+      if (p.tinhTrang == "Bảo trì") {
+        them = " - Đang bảo trì";
+      }
+      htmlPhong += '<option value="' + p.ma + '">' + anToan(p.ten) + " (" + p.sucChua + " người)" + them + "</option>";
+    }
+    document.getElementById("d-phong").innerHTML = htmlPhong;
+
+    // Đổ danh sách giờ (07:00, 07:30, 08:00 ... 21:00) vào 2 ô chọn giờ
+    let htmlGio = "";
+    for (let gio = 7; gio <= 20; gio++) {
+      htmlGio += "<option>" + soCo2Chu(gio) + ":00</option>";
+      htmlGio += "<option>" + soCo2Chu(gio) + ":30</option>";
+    }
+    htmlGio += "<option>21:00</option>";
+    document.getElementById("d-tu").innerHTML = htmlGio;
+    document.getElementById("d-den").innerHTML = htmlGio;
+    document.getElementById("d-tu").value = "08:00";
+    document.getElementById("d-den").value = "10:00";
+
+    // Ngày mặc định là hôm nay, không cho chọn ngày đã qua
+    document.getElementById("d-ngay").value = homNay();
+    document.getElementById("d-ngay").min = homNay();
+
+    if (nguoi.vaiTro == "Admin") {
+      document.getElementById("ghi-chu").textContent = "Admin đặt phòng sẽ được duyệt ngay.";
+    } else {
+      document.getElementById("ghi-chu").textContent = "Yêu cầu cần được Admin duyệt trước khi sử dụng phòng.";
+    }
+
+    hienThongTin();
+  </script>
+</body>
+</html>
