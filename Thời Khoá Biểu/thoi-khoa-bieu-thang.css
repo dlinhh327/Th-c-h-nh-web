@@ -1,0 +1,323 @@
+body {
+    width: 1180px;
+    margin: 0 auto;
+    font-family: Roboto, Arial, sans-serif;
+    background: #eaf6fc;
+    color: #12324a;
+    font-size: 16px;
+}
+
+/* ===== Thanh trên cùng ===== */
+header {
+    margin: 20px 0;
+    padding: 12px 20px;
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid #d3e6f1;
+    border-radius: 14px;
+}
+
+header input {
+    width: 320px;
+    padding: 9px 16px;
+    font-size: 15px;
+    color: #12324a;
+    border: none;
+    border-radius: 20px;
+    background: #eaf6fc;
+}
+
+.user {
+    float: right;
+}
+
+.bell {
+    margin-right: 14px;
+    font-size: 20px;
+}
+
+.avatar {
+    display: inline-block;
+    width: 36px;
+    height: 36px;
+    line-height: 36px;
+    text-align: center;
+    font-weight: bold;
+    color: #ffffff;
+    border-radius: 50%;
+    background: #0077b6;
+}
+
+/* ===== Khung lịch ===== */
+article {
+    padding: 24px;
+    background: #ffffff;
+    border: 1px solid #d3e6f1;
+    border-radius: 14px;
+}
+
+.toolbar {
+    overflow: hidden;
+}
+
+h1 {
+    float: left;
+    margin: 0;
+    font-size: 30px;
+    color: #023e8a;
+}
+
+/* Nút Tuần / Tháng */
+nav {
+    float: right;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+nav li {
+    display: inline-block;
+    margin-left: 8px;
+}
+
+nav a {
+    display: block;
+    padding: 9px 22px;
+    font-size: 16px;
+    text-decoration: none;
+    color: #0077b6;
+    border: 1px solid #0077b6;
+    border-radius: 8px;
+    background: #ffffff;
+}
+
+nav a.active {
+    color: #ffffff;
+    background: #0077b6;
+}
+
+/* Chuyển tháng */
+.month {
+    margin: 22px 0 14px;
+    font-size: 18px;
+    color: #12324a;
+}
+
+.month a {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    line-height: 26px;
+    margin: 0 8px;
+    text-align: center;
+    text-decoration: none;
+    color: #0077b6;
+    border: 1px solid #d3e6f1;
+    border-radius: 6px;
+}
+
+/* ===== Bảng lịch tháng ===== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+th {
+    padding: 10px;
+    font-size: 15px;
+    color: #4d6f85;
+    border: 1px solid #d3e6f1;
+    background: #f6fbfe;
+}
+
+td {
+    height: 108px;
+    padding: 6px;
+    vertical-align: top;
+    border: 1px solid #d3e6f1;
+}
+
+td:hover {
+    background: #f6fbfe;
+}
+
+.day {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 13px;
+    color: #4d6f85;
+}
+
+.other .day {
+    color: #a9bfcc;
+}
+
+.today {
+    background: #eaf6fc;
+}
+
+.today .day {
+    font-weight: bold;
+    color: #0077b6;
+}
+
+/* ===== Buổi học trong ô ===== */
+.event {
+    margin-top: 4px;
+    padding: 4px 8px;
+    font-size: 12px;
+    line-height: 1.4;
+    color: #023e8a;
+    border-left: 3px solid #0077b6;
+    border-radius: 6px;
+    background: #e3f1fb;
+}
+
+.approved {
+    color: #0d6b50;
+    border-left-color: #1b9e77;
+    background: #e0f5ec;
+}
+
+.pending {
+    color: #8a5a00;
+    border-left-color: #e09f1f;
+    background: #fff3dc;
+}
+
+.rejected {
+    color: #a12b2b;
+    border-left-color: #d64545;
+    background: #fde8e8;
+}
+
+/* ===== Chú thích màu ===== */
+.legend {
+    list-style: none;
+    padding: 0;
+    margin: 18px 0 0;
+}
+
+.legend li {
+    display: inline-block;
+    margin-right: 24px;
+    font-size: 14px;
+    color: #4d6f85;
+}
+
+.dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin-right: 6px;
+    border-radius: 50%;
+    background: #0077b6;
+}
+
+.dot.approved {
+    background: #1b9e77;
+}
+
+.dot.pending {
+    background: #e09f1f;
+}
+
+.dot.rejected {
+    background: #d64545;
+}
+
+footer {
+    margin: 20px 0;
+    text-align: center;
+    font-size: 14px;
+    color: #4d6f85;
+}
+
+/* ===== Phần bổ sung khi có JavaScript ===== */
+nav a.active {
+    color: #ffffff;
+    background: #0077b6;
+}
+
+.today-link {
+    width: auto !important;
+    padding: 0 12px;
+    margin-left: 10px !important;
+    font-size: 14px;
+}
+
+#calendar.week-view td {
+    height: 260px;
+}
+
+.event {
+    cursor: pointer;
+}
+
+.event:hover {
+    opacity: 0.8;
+}
+
+.event small {
+    display: block;
+    color: #4d6f85;
+}
+
+/* ===== Form thêm lịch ===== */
+.form-add {
+    margin-top: 20px;
+}
+
+h2 {
+    margin: 0 0 14px;
+    font-size: 20px;
+    color: #023e8a;
+}
+
+.form-add label {
+    display: inline-block;
+    margin: 0 12px 12px 0;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.form-add input,
+.form-add select {
+    display: block;
+    margin-top: 4px;
+    padding: 9px 11px;
+    font-size: 15px;
+    color: #12324a;
+    border: 1px solid #d3e6f1;
+    border-radius: 8px;
+    background: #ffffff;
+}
+
+.form-add button {
+    padding: 10px 22px;
+    font-size: 15px;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    background: #0077b6;
+    cursor: pointer;
+}
+
+.form-add button:hover {
+    background: #023e8a;
+}
+
+#msg {
+    min-height: 20px;
+    margin: 10px 0 0;
+    font-size: 14px;
+    color: #d64545;
+}
+
+#msg.ok {
+    color: #1b9e77;
+}

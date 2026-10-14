@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Thời khoá biểu</title>
+    <link rel="stylesheet" type="text/css" href="thoi-khoa-bieu-thang.css"/>
+</head>
+<body>
+    <header>
+        <input type="text" id="search" placeholder="Tìm kiếm phòng, ghi chú..."/>
+        <div class="user">
+            <span class="bell">🔔</span>
+            <span class="avatar">T</span>
+        </div>
+    </header>
+
+    <main>
+        <article>
+            <div class="toolbar">
+                <h1>Lịch học</h1>
+                <nav>
+                    <ul>
+                        <li><a href="#" id="btn-week">Tuần</a></li>
+                        <li><a href="#" id="btn-month" class="active">Tháng</a></li>
+                    </ul>
+                </nav>
+            </div>
+
+            <h3 class="month">
+                <a href="#" id="prev">&lt;</a>
+                <span id="month-title"></span>
+                <a href="#" id="next">&gt;</a>
+                <a href="#" id="go-today" class="today-link">Hôm nay</a>
+            </h3>
+
+            <table id="calendar">
+                <thead>
+                    <tr>
+                        <th>Thứ 2</th>
+                        <th>Thứ 3</th>
+                        <th>Thứ 4</th>
+                        <th>Thứ 5</th>
+                        <th>Thứ 6</th>
+                        <th>Thứ 7</th>
+                        <th>CN</th>
+                    </tr>
+                </thead>
+                <!-- JS SẼ ĐỔ DỮ LIỆU VÀO ĐÂY -->
+                <tbody id="calendar-body">
+                </tbody>
+            </table>
+
+            <ul class="legend">
+                <li><span class="dot approved"></span>Đã duyệt</li>
+                <li><span class="dot pending"></span>Chờ duyệt</li>
+                <li><span class="dot rejected"></span>Từ chối</li>
+                <li><span class="dot"></span>Lịch học cố định</li>
+            </ul>
+        </article>
+
+        <!-- Form thêm lịch: lịch bên trên sẽ hiện đúng như dữ liệu vừa nhập -->
+        <article class="form-add">
+            <h2>Thêm lịch học</h2>
+            <label>Phòng
+                <input type="text" id="room" placeholder="VD: A101"/>
+            </label>
+            <label>Ngày
+                <input type="date" id="date"/>
+            </label>
+            <label>Giờ bắt đầu
+                <input type="time" id="start" value="08:00"/>
+            </label>
+            <label>Giờ kết thúc
+                <input type="time" id="end" value="09:30"/>
+            </label>
+            <label>Trạng thái
+                <select id="status">
+                    <option value="fixed">Lịch học cố định</option>
+                    <option value="approved">Đã duyệt</option>
+                    <option value="pending">Chờ duyệt</option>
+                    <option value="rejected">Từ chối</option>
+                </select>
+            </label>
+            <label>Ghi chú
+                <input type="text" id="note" placeholder="Không bắt buộc"/>
+            </label>
+            <button type="button" id="add">Thêm lịch</button>
+            <p id="msg"></p>
+        </article>
+    </main>
+
+    <footer>
+        &copy; Copyright 2025 - Quản lý phòng học
+    </footer>
+
+    <script src="thoi-khoa-bieu-thang.js"></script>
+</body>
+</html>
